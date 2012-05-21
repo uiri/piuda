@@ -1,13 +1,15 @@
+##### COPY THIS TO A FILE NAMED CONFIG ##### 
+##### BEFORE CHANGING ANYTHING #####
 ##### DO NOT LEAVE THESE BLANK #####
 #specify server
-server=
+server=irc.freenode.net
 # specify channels, separated by commads
-channels=
+channels=#conlang
 # nick!user@host
-nick=
-user=
+nick=PiudaBotTest
+user=Testing
 # this shows up in whois
-realname=
+realname=Not A Real Boy
 ##### YOU MAY LEAVE THE FOLLOWING BLANK #####
 # password for authenticating to NickServ or whatever
 password=
