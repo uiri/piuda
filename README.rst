@@ -1,3 +1,2 @@
-New Repository
-Sorry I haven't put anything useful here
--Uiri
+The IRC bot for #conlang on freenode.
+I'm lazy but others are not, so maybe send a pull request or something.

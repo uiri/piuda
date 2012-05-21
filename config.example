@@ -1,0 +1,13 @@
+##### DO NOT LEAVE THESE BLANK #####
+#specify server
+server=
+# specify channels, separated by commads
+channels=
+# nick!user@host
+nick=
+user=
+# this shows up in whois
+realname=
+##### YOU MAY LEAVE THE FOLLOWING BLANK #####
+# password for authenticating to NickServ or whatever
+password=
