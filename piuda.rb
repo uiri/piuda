@@ -78,6 +78,7 @@ bot = Bot.new do
   configfile = File.new("config", 'r')
   configlist = {}
   configfile.each{|line|
+    line = line.strip
     if (line =~ /^#/) != 0
       breakdown = line.split("=")
       if breakdown[0] == "channels"
@@ -99,8 +100,7 @@ bot = Bot.new do
     @info = []
     infofile.each {|line| @info.push(line) }
     infofile.close
-    @help = "I am a #conlang bot by Uiri written to best Fenhl by using a superior language
-For an overview of commands, type -help commands"
+    @help = "I am written in ruby, by Uiri. Check out the github repo! https://github.com/uiri/piuda"
     @helpcommands = "I lied. http://i0.kym-cdn.com/photos/images/original/000/126/055/lied.gif"
   end
 
