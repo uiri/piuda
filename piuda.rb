@@ -31,7 +31,7 @@ class Bot < Cinch::Bot
         torem = info.length - 1
       end
       if torem < info.length
-        user.msg("Removed \"#{info[torem].chomp}\" from info list for #conlang")
+        user.msg("Removed \"#{info[torem].chomp}\" from info list for ##conlang")
         info.delete_at(torem)
       else
         user.msg("I only accept numbers from 0 to #{info.length - 1}")
@@ -64,7 +64,7 @@ class Bot < Cinch::Bot
     elsif (m.message =~ /^addinfo/ && private == true) || self.complex_check("addinfo", m.message)
       toadd = /addinfo (.+)$/.match(m.message)[1]
       responses[0].push(toadd)
-      m.user.msg("Added \"#{toadd}\" to info list for #conlang")
+      m.user.msg("Added \"#{toadd}\" to info list for ##conlang")
     elsif (m.message =~ /^rminfo/ && private == true) || self.complex_check("rminfo", m.message)
       responses[0] = self.rm_info(m.user, responses[0], m.message)
     elsif (m.message == "fixnick" && private == true) || self.simple_check("fixnixk", m.message)

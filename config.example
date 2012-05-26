@@ -4,7 +4,7 @@
 #specify server
 server=irc.freenode.net
 # specify channels, separated by commads
-channels=#conlang
+channels=##conlang
 # nick!user@host
 nick=PiudaBotTest
 user=Testing
