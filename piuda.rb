@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 require 'cinch'
+require 'cinch/logger/zcbot_logger'
 
 class Bot < Cinch::Bot
+  attr_accessor :topic, :help, :helpcommands
 
   def simple_check(check, message)
     if message == "-" + check
@@ -46,7 +48,7 @@ class Bot < Cinch::Bot
     if user.host == self.host
       infofile = File.new("conlanginfo", 'w')
       info.each {|line| infofile.write(line)}
-      self.quit("Bye")
+      self.quit("Kal pan ym")
     else
       user.msg("You can't tell me what to do!")
     end
@@ -54,6 +56,7 @@ class Bot < Cinch::Bot
 
   def check_for_command(m, responses, private=false)
     if (m.message == "quit" && private == true) || self.simple_check("quit", m.message)
+      puts responses
       self.can_quit(m.user, responses[0])
     elsif (m.message == "help" && private == true) || self.simple_check("help", m.message)
       m.user.msg(responses[1])
@@ -74,19 +77,21 @@ class Bot < Cinch::Bot
   end
 end
 
-bot = Bot.new do
-  configfile = File.new("config", 'r')
-  configlist = {}
-  configfile.each{|line|
-    line = line.strip
-    if (line =~ /^#/) != 0
-      breakdown = line.split("=")
-      if breakdown[0] == "channels"
-        breakdown[1] = breakdown[1].split(",")
-      end
-      configlist[breakdown[0]] = breakdown[1]
+configfile = File.new("config", 'r')
+configlist = {}
+configfile.each{|line|
+  line = line.strip
+  if (line =~ /^#/) != 0
+    breakdown = line.split("=")
+    if breakdown[0] == "channels"
+      breakdown[1] = breakdown[1].split(",")
     end
-  }
+    configlist[breakdown[0]] = breakdown[1]
+  end
+}
+bot = Bot.new do
+  pisglogfile = File.new("pisglog", 'a')
+  pisglogger = Cinch::Logger::ZcbotLogger.new(pisglogfile)
   configure do |c|
     c.server = configlist['server']
     c.channels = configlist['channels']
@@ -96,21 +101,24 @@ bot = Bot.new do
     if configlist['password']
       c.password = configlist['password']
     end
-    infofile = File.new("conlanginfo", 'r')
-    @info = []
-    infofile.each {|line| @info.push(line) }
-    infofile.close
-    @help = "I am written in ruby, by Uiri. Check out the github repo! https://github.com/uiri/piuda"
-    @helpcommands = "I lied. http://i0.kym-cdn.com/photos/images/original/000/126/055/lied.gif"
   end
 
+  infofile = File.new("conlanginfo", 'r')
+  @topic = []
+  infofile.each {|line| @topic.push(line) }
+  infofile.close
+  @help = "I am written in ruby, by Uiri. Check out the github repo! https://github.com/uiri/piuda"
+  @helpcommands = "I lied. http://i0.kym-cdn.com/photos/images/original/000/126/055/lied.gif"
+
   on :private do |m|
-    @info = bot.check_for_command(m, [@info, @help, @helpcommands], true)
+    bot.topic = bot.check_for_command(m, [bot.topic, bot.help, bot.helpcommands], true)
   end
 
   on :channel do |m|
-    @info = bot.check_for_command(m, [@info, @help, @helpcommands])
+    bot.topic = bot.check_for_command(m, [bot.topic, bot.help, bot.helpcommands])
+    pisglogger.log(m.raw, :incoming, :log)
   end
 end
 
+bot.set_nick(bot.config.nick)
 bot.start
