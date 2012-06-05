@@ -1,0 +1,6 @@
+<channel="#channel">
+ Logfile = "pisglog"
+ Format = "zbot"
+ Maintainer = "YOURNAMEHERE" 
+ OutputFile = "YOUROUTPUTFILEHERE"
+</channel>

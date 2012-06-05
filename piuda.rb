@@ -48,7 +48,7 @@ class Bot < Cinch::Bot
     if user.host == self.host
       infofile = File.new("conlanginfo", 'w')
       info.each {|line| infofile.write(line)}
-      self.quit("Kal pan ym")
+      self.quit("kal pan ym")
     else
       user.msg("You can't tell me what to do!")
     end
@@ -90,8 +90,6 @@ configfile.each{|line|
   end
 }
 bot = Bot.new do
-  pisglogfile = File.new("pisglog", 'a')
-  pisglogger = Cinch::Logger::ZcbotLogger.new(pisglogfile)
   configure do |c|
     c.server = configlist['server']
     c.channels = configlist['channels']
@@ -103,6 +101,8 @@ bot = Bot.new do
     end
   end
 
+  pisglogfile = File.new("pisglog", 'a')
+  pisglogger = Cinch::Logger::ZcbotLogger.new(pisglogfile)
   infofile = File.new("conlanginfo", 'r')
   @topic = []
   infofile.each {|line| @topic.push(line) }
@@ -117,6 +117,7 @@ bot = Bot.new do
   on :channel do |m|
     bot.topic = bot.check_for_command(m, [bot.topic, bot.help, bot.helpcommands])
     pisglogger.log(m.raw, :incoming, :log)
+    pisglogfile.flush
   end
 end
 
