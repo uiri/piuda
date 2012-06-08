@@ -3,7 +3,7 @@ require 'cinch'
 require 'cinch/logger/zcbot_logger'
 
 class Bot < Cinch::Bot
-  attr_accessor :topic, :help, :helpcommands
+  attr_accessor :topic, :help, :helpcommands, :memos
 
   def simple_check(check, message)
     if message == "-" + check
@@ -62,6 +62,15 @@ class Bot < Cinch::Bot
       m.user.msg(responses[1])
     elsif (m.message == "help commands" && private == true) || self.simple_check("help commands", m.message)
       m.user.msg(responses[2])
+    elsif (m.message =~ /^memo/ && private == true) || self.complex_check("memo", m.message)
+      matches = /memo ([^ ]+) (.+)$/.match(m.message)
+      if self.memos[matches[1]] == nil
+        self.memos[matches[1]] = []
+      end
+      self.memos[matches[1]].push("<"+m.user.nick+"> "+matches[2])
+      m.user.msg("Memo \"#{matches[2]}\" for user #{matches[1]} added.")
+    elsif (m.message == "stats" && private == true) || self.simple_check("stats", m.message)
+      m.user.msg("http://j.xqz.ca/pisg/")
     elsif (m.message == "info" && private == true) || self.simple_check("info", m.message)
       responses[0].each {|infos| m.user.msg(infos)}
     elsif (m.message =~ /^addinfo/ && private == true) || self.complex_check("addinfo", m.message)
@@ -112,14 +121,30 @@ bot = Bot.new do
 
   on :private do |m|
     bot.topic = bot.check_for_command(m, [bot.topic, bot.help, bot.helpcommands], true)
+    if m.user
+      if bot.memos[m.user.nick] != [] && bot.memos[m.user.nick] != nil
+        for tosend in bot.memos[m.user.nick] do
+          m.user.msg(tosend)
+        end
+      end
+    end
   end
 
   on :channel do |m|
     bot.topic = bot.check_for_command(m, [bot.topic, bot.help, bot.helpcommands])
+    if m.user
+      if bot.memos[m.user.nick] != [] && bot.memos[m.user.nick] != nil
+        for tosend in bot.memos[m.user.nick] do
+          m.user.msg(tosend)
+        end
+        bot.memos[m.user.nick] = []
+      end
+    end
     pisglogger.log(m.raw, :incoming, :log)
     pisglogfile.flush
   end
 end
 
 bot.set_nick(bot.config.nick)
+bot.memos = {}
 bot.start
