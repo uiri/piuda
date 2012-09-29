@@ -47,7 +47,10 @@ class Bot < Cinch::Bot
   def can_quit(user, info)
     if Socket.getaddrinfo(user.host, 80)[0][3] == Socket.getaddrinfo(self.host, 80)[0][3]
       infofile = File.new("conlanginfo", 'w')
-      info.each {|line| infofile.write(line)}
+      info.each do |line|
+        line.chomp!
+        infofile.write(line + "\n")
+      end
       self.quit("kal pan ym")
     else
       user.msg("You can't tell me what to do!")
@@ -80,7 +83,9 @@ class Bot < Cinch::Bot
     elsif (m.message =~ /^rminfo/ && private == true) || self.complex_check("rminfo", m.message)
       responses[0] = self.rm_info(m.user, responses[0], m.message)
     elsif (m.message == "fixnick" && private == true) || self.simple_check("fixnixk", m.message)
-      self.set_nick("Piuda")
+      self.config.nick = "Piuda"
+      self.nick = "Piuda"
+      self.set_nick(self.config.nick)
     end
     return responses[0]
   end
