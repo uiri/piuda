@@ -119,6 +119,7 @@ bot = Bot.new do
   pisglogger = Cinch::Logger::ZcbotLogger.new(pisglogfile)
   infofile = File.new("conlanginfo", 'r')
   @topic = []
+  @mustid = true
   infofile.each {|line| @topic.push(line) }
   infofile.close
   @help = "I am written in ruby, by Uiri. Check out the github repo! https://github.com/uiri/piuda"
@@ -127,6 +128,12 @@ bot = Bot.new do
   on :private do |m|
     bot.topic = bot.check_for_command(m, [bot.topic, bot.help, bot.helpcommands], true)
     if m.user
+      if m.user.nick == "NickServ"
+        if bot.alreadyid
+          m.user.msg("identify "+bot.config.password)
+          bot.alreadyid = false
+        end
+      end
       if bot.memos[m.user.nick] != [] && bot.memos[m.user.nick] != nil
         for tosend in bot.memos[m.user.nick] do
           m.user.msg(tosend)
