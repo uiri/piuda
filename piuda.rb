@@ -82,7 +82,7 @@ class Bot < Cinch::Bot
       m.user.msg("Added \"#{toadd}\" to info list for ##conlang")
     elsif (m.message =~ /^rminfo/ && private == true) || self.complex_check("rminfo", m.message)
       responses[0] = self.rm_info(m.user, responses[0], m.message)
-    elsif (m.message == "fixnick" && private == true) || self.simple_check("fixnixk", m.message)
+    elsif (m.message == "fixnick" && private == true) || self.simple_check("fixnick", m.message)
       self.config.nick = "Piuda"
       self.nick = "Piuda"
       self.set_nick(self.config.nick)
