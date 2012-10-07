@@ -4,7 +4,7 @@ require 'cinch/logger/zcbot_logger'
 require 'open-uri'
 
 class Bot < Cinch::Bot
-  attr_accessor :topic, :memos, :helphash, :propernick, :pisgurl, :mustid
+  attr_accessor :topic, :memos, :helphash, :propernick, :pisgurl, :mustid, :ops
 
   def simple_check(check, message)
     if message == "-" + check
@@ -55,7 +55,7 @@ class Bot < Cinch::Bot
   end
 
   def rm_info(user, info, message)
-    if Socket.getaddrinfo(user.host, 80)[0][3] == Socket.getaddrinfo(self.host, 80)[0][3]
+    if self.ops.include?(user.authname.downcase)
       begin
         torem = / ((\d)+)$/.match(message)[1].to_i
       rescue
@@ -158,6 +158,9 @@ bot = Bot.new do
   pisglogfile = File.new("pisglog", 'a')
   pisglogger = Cinch::Logger::ZcbotLogger.new(pisglogfile)
   infofile = File.new("conlanginfo", 'r')
+  if configlist['ops']
+    @ops = configlist['ops'].downcase.split(',')
+  end
   @memos = {}
   @topic = []
   @propernick = configlist['nick']
