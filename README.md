@@ -16,6 +16,7 @@ The following commands can be activated either using the prefix `-`, by highligh
 
 *   `addinfo` <text> — the text is added as a new line to the list of info
     messages
+*   `ety` <word> <n> - Gives the etymology of word. If n is present, gives the nth etymology, with the default one being the 0th etymology. If there are less than n-1 etymologies, gives the last one.
 *   `fixnick` — forces the bot to change nick to Piuda
 *   `help` — the bot starts talking about itself
 *   `help commands` - the bot lists commands available

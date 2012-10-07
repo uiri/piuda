@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'cinch'
 require 'cinch/logger/zcbot_logger'
+require 'open-uri'
 
 class Bot < Cinch::Bot
   attr_accessor :topic, :memos, :helphash, :propernick, :pisgurl, :mustid
@@ -23,6 +24,23 @@ class Bot < Cinch::Bot
     else
       return false
     end
+  end
+
+  def get_etymology(word, n=0)
+    n = n.to_i + 2
+    ety = ""
+    open("http://www.etymonline.com/index.php?searchmode=term&search="+word) {|f|
+      f.each_line {|l| ety += l}
+    }
+    if ety =~ /<dd/
+      ety = ety.split("<dd", n)[-1]
+      ety = ety.split("</dd", 2)[0]
+      ety = ety.split(">", 2)[1]
+      ety.gsub!(/<[^<>]+>/, '')
+    else
+      ety = "Word not found. Sorry."
+    end
+    return ety
   end
 
   def give_help(user, helptopic)
@@ -95,6 +113,19 @@ class Bot < Cinch::Bot
       self.config.nick = self.propernick
       self.nick = self.propernick
       self.set_nick(self.config.nick)
+    elsif (m.message =~ /^ety/ && private == true) || self.complex_check("ety", m.message)
+      msg = m.message.split(' ')
+      word = msg[1]
+      if msg.length > 2
+        if /^\d+/.match(msg[2])
+          index = msg[2]
+        else
+          index = 0
+        end
+      else
+        index = 0
+      end
+      m.user.msg(self.get_etymology(word, index))
     end
     return retval
   end
@@ -135,8 +166,9 @@ bot = Bot.new do
   infofile.each {|line| @topic.push(line) }
   infofile.close
   @helphash = {"" => "I am written in ruby, by Uiri. Check out the github repo! https://github.com/uiri/piuda",
-    "commands" => "Available commands: addinfo, fixnick, help, info, memo, quit, rminfo, stats", 
     "addinfo" => "addinfo <text> - The text is added as a new line to the list of info messages",
+    "commands" => "Available commands: addinfo, fixnick, help, info, memo, quit, rminfo, stats",
+    "ety" => "ety <word> <n> - Sends the etymology of word. If n is present (and numerical) it will give the nth etymology, with the default one being 0",
     "fixnick" => "Forces the bot to change its nick to what it ought to be",
     "help" => "help <topic> - Gives a help message about topic or a message about itself",
     "info" => "Replies with the info messages",
