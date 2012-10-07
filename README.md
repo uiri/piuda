@@ -18,6 +18,8 @@ The following commands can be activated either using the prefix `-`, by highligh
     messages
 *   `fixnick` — forces the bot to change nick to Piuda
 *   `help` — the bot starts talking about itself
+*   `help commands` - the bot lists commands available
+*   `help` <command> - gives help for command
 *   `info` — the bot replies with all the info messages
 *   `memo` <user> <text> — the bot saves the text as a message to the user, and
     sends it to them in query the next time the talk in the channel

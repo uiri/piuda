@@ -10,6 +10,8 @@ nick=PiudaBotTest
 user=Testing
 # this shows up in whois
 realname=Not A Real Boy
+# url to find pisg statistics about the channel. Leave as is if you aren't running pisg
+pisgurl=Whoops, this feature is turned off.
 ##### YOU MAY LEAVE THE FOLLOWING BLANK #####
 # password for authenticating to NickServ or whatever
 password=
