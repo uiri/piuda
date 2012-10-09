@@ -168,9 +168,8 @@ bot = Bot.new do
   @mustid = true
   infofile.each {|line| @topic.push(line) }
   infofile.close
-  @helphash = {"" => "I am written in ruby, by Uiri. Check out the github repo! https://github.com/uiri/piuda",
+  @helphash = {"" => "I am written in ruby, by Uiri. Check out the github repo! https://github.com/uiri/piuda Try help commands for a list of help topics.",
     "addinfo" => "addinfo <text> - The text is added as a new line to the list of info messages",
-    "commands" => "Available commands: addinfo, fixnick, help, info, memo, quit, rminfo, stats",
     "ety" => "ety <word> <n> - Sends the etymology of word. If n is present (and numerical) it will give the nth etymology, with the default one being 0",
     "fixnick" => "Forces the bot to change its nick to what it ought to be",
     "help" => "help <topic> - Gives a help message about topic or a message about itself",
@@ -180,6 +179,7 @@ bot = Bot.new do
     "rminfo" => "rminfo <n> - Removes the nth line from the infolist. The first line is line '0'",
     "stats" => "Sends the URL for channel statistics. " + configlist['pisgurl']
   }
+  @helphash['commands'] = "Available commands: #{(@helphash.keys.join(', ') + ' ').slice(2...-1)}"
 
   on :private do |m|
     bot.topic = bot.check_for_command(m, bot.topic, bot.helphash, true)
