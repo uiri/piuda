@@ -29,7 +29,7 @@ class Bot < Cinch::Bot
   def get_etymology(word, n=0)
     n = n.to_i + 2
     ety = ""
-    open("http://www.etymonline.com/index.php?searchmode=term&search="+word) {|f|
+    open("http://www.etymonline.com/index.php?searchmode=term&search="+URI::encode(word)) {|f|
       f.each_line {|l| ety += l}
     }
     if ety =~ /<dd/
@@ -46,7 +46,7 @@ class Bot < Cinch::Bot
   def get_unicodechar(char, n)
     n = n.to_i + 2
     uch = ""
-    open("http://www.fileformat.info/info/unicode/char/search.htm?q="+char) {|f|
+    open("http://www.fileformat.info/info/unicode/char/search.htm?q="+URI::encode(char)) {|f|
       f.each_line {|l| uch += l }
     }
     if uch =~ /<tr /
