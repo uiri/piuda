@@ -43,6 +43,27 @@ class Bot < Cinch::Bot
     return ety
   end
 
+  def get_unicodechar(char, n)
+    n = n.to_i + 2
+    uch = ""
+    open("http://www.fileformat.info/info/unicode/char/search.htm?q="+char) {|f|
+      f.each_line {|l| uch += l }
+    }
+    if uch =~ /<tr /
+      uch = uch.split("<tr ", n)[-1]
+      uch = uch.split("</tr>", 2)[0]
+      uch = uch.split(">", 2)[1]
+      uch.gsub!(/<[^<>]+>/, '')
+      uch.gsub!(/\t+/, ' ')
+      uch.gsub!(/\n/, '')
+      uch.gsub!(/\r/, '')
+      uch.gsub!(/&\#x(.+);/) { [$1.hex].pack("U") }
+    else
+      uch = "No unicode characters found, sorry."
+    end
+    return uch
+  end
+
   def give_help(user, helptopic)
     if !helptopic
       helptopic = ""
@@ -116,16 +137,31 @@ class Bot < Cinch::Bot
     elsif (m.message =~ /^ety/ && private == true) || self.complex_check("ety", m.message)
       msg = m.message.split(' ')
       word = msg[1]
-      if msg.length > 2
-        if /^\d+/.match(msg[2])
-          index = msg[2]
-        else
-          index = 0
-        end
-      else
-        index = 0
+      index = 0
+      if msg.length > 2 && /^\d+/.match(msg[2])
+        index = msg[2]
       end
       m.user.msg(self.get_etymology(word, index))
+    elsif (m.message =~ /^unicode/ && private == true) || self.complex_check("unicode", m.message)
+      msg = m.message.split(' ')
+      char = msg[1]
+      index = ""
+      if msg.length > 2
+        if /^\d+/.match(msg[-1])
+          index = msg[-1]
+          msg.slice!(-1)
+        end
+        msg.slice!(0)
+        msg.slice!(0)
+        msg.each {|s|
+            char += "+"
+            char += s
+        }
+      end
+      if index == ""
+        index = 0
+      end
+      m.user.msg(self.get_unicodechar(char, index))
     end
     return retval
   end
@@ -177,7 +213,8 @@ bot = Bot.new do
     "memo" => "memo <user> <text> - Saves the text as a message for a user which is sent to the user the next time the bot receives a message from them either via query or in the channel",
     "quit" => "Shuts down the bot. Only works if you are coming from the same ip/host as the bot",
     "rminfo" => "rminfo <n> - Removes the nth line from the infolist. The first line is line '0'",
-    "stats" => "Sends the URL for channel statistics. " + configlist['pisgurl']
+    "stats" => "Sends the URL for channel statistics. " + configlist['pisgurl'],
+    "unicode" => "unicode <search terms> <n> - search for a unicode character using search terms. If search terms ends with a number it will be interpreted as n and will give the nth result after the first one."
   }
   @helphash['commands'] = "Available commands: #{(@helphash.keys.join(', ') + ' ').slice(2...-1)}"
 
